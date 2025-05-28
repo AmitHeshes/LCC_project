@@ -4,7 +4,6 @@ from datasets import load_dataset
 import re
 
 
-
 def is_title_line(text):
     # Matches lines like = Title =, == Section ==, etc.
     return bool(re.match(r"^=+.*=+$", text.strip()))
