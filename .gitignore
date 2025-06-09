@@ -1,4 +1,5 @@
 ia_Paragraph_ordinary.csv
 wikitext103_train.txt
-model_3gram.arpa
-model_3gram.binary
+wikitext103_trigram.arpa
+wikitext103_trigram.binary
+ia_Paragraph_ordinary.csv.zip
