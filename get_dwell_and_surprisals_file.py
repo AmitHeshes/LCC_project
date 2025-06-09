@@ -19,7 +19,7 @@ def create_dwell_time_file(output_dwell_time_path, input_eye_scan_path):
     """
         
     print("Loading CSV (needed columns only)...")
-    df = pd.read_csv(input_eye_scan_path, usecols=["participant_id", "TRIAL_INDEX", "IA_LABEL", "IA_DWELL_TIME"])
+    df = pd.read_csv(input_eye_scan_path, usecols=["participant_id", "TRIAL_INDEX", "IA_ID", "IA_LABEL", "IA_DWELL_TIME"])
 
     # Group by participant_id and TRIAL_INDEX
     print("Processing trials...")
@@ -29,16 +29,17 @@ def create_dwell_time_file(output_dwell_time_path, input_eye_scan_path):
     with open(output_dwell_time_path, "w", newline='', encoding='utf-8') as f_out:
         writer = csv.writer(f_out)
         # Write header
-        writer.writerow(["participant_id", "TRIAL_INDEX", "word", "IA_DWELL_TIME"])
+        writer.writerow(["participant_id", "TRIAL_INDEX", "IA_ID", "word", "IA_DWELL_TIME"])
 
         # Loop through trials
         for (participant_id, trial_index), group in tqdm(grouped, desc="Trials"):
             for idx, row in group.iterrows():
                 word = str(row["IA_LABEL"]).strip()
                 dwell_time = row["IA_DWELL_TIME"]
+                ia_id = row["IA_ID"]
 
                 # Write one row
-                writer.writerow([participant_id, trial_index, word, dwell_time])
+                writer.writerow([participant_id, trial_index, ia_id, word, dwell_time])
 
     print("Dwell time file written:", output_dwell_time_path)
 
@@ -53,7 +54,7 @@ def word_surprisal_kenlm(model, context, word):
 
 def create_surprisal_kenlm_file(output_kenlm_surprisal_path, input_eye_scan_path, model):
     print("Loading CSV (needed columns only)...")
-    df = pd.read_csv(input_eye_scan_path, usecols=["participant_id", "TRIAL_INDEX", "IA_LABEL"])
+    df = pd.read_csv(input_eye_scan_path, usecols=["participant_id", "TRIAL_INDEX", "IA_ID", "IA_LABEL"])
 
     # Group safely by participant_id and TRIAL_INDEX - for getting context
     print("Processing trials...")
@@ -62,7 +63,7 @@ def create_surprisal_kenlm_file(output_kenlm_surprisal_path, input_eye_scan_path
     with open(output_kenlm_surprisal_path, "w", newline='', encoding='utf-8') as f_out:
         writer = csv.writer(f_out)
         # Write header
-        writer.writerow(["participant_id", "TRIAL_INDEX", "word", "kenlm_surprisal"])
+        writer.writerow(["participant_id", "TRIAL_INDEX", "IA_ID", "word", "kenlm_surprisal"])
 
         # Loop through trials
         for (participant_id, trial_index), group in tqdm(grouped, desc="Trials"):
@@ -75,8 +76,10 @@ def create_surprisal_kenlm_file(output_kenlm_surprisal_path, input_eye_scan_path
                 else:
                     surprisal = word_surprisal_kenlm(model, context, word)
 
+                ia_id = row["IA_ID"]
+
                 # Write one row surprisal
-                writer.writerow([participant_id, trial_index, word, surprisal])
+                writer.writerow([participant_id, trial_index, ia_id, word, surprisal])
 
                 # Update context
                 context = context + " " + word
@@ -93,7 +96,7 @@ def merge_surprisal_dwell(kenlm_surprisal_path, dwell_time_path, merged_path):
     dwell_df = pd.read_csv(dwell_time_path)
 
     # Merge
-    merged = pd.merge(kenlm_surprisal_df, dwell_df, on=["participant_id", "TRIAL_INDEX", "word"], how="inner")
+    merged = pd.merge(kenlm_surprisal_df, dwell_df, on=["participant_id", "TRIAL_INDEX", "IA_ID", "word"], how="inner")
     print("Finished merging dataframes")
 
     # Save merged file
