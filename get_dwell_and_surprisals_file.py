@@ -11,7 +11,8 @@ dwell_time_path = "ia_dwell_time_simple.csv"
 kenlm_surprisal_path = "kenlm_surprisals_simple.csv"
 merged_path = "merged_surprisal_dwell.csv"
 # Load KenLM model once
-kenlm_trigram_model = kenlm.Model("wikitext103_trigram.binary")
+trained_model_path = "wikitext103_trigram.binary"
+kenlm_trigram_model = kenlm.Model(trained_model_path)
 
 def create_dwell_time_file(output_dwell_time_path, input_eye_scan_path):
     """
