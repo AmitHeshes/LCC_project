@@ -3,17 +3,24 @@ import csv
 from tqdm import tqdm
 import kenlm
 import math
+from datasets import load_dataset
+import re
 
 # Input file
-input_eye_scan_path = "ia_Paragraph_ordinary.csv"
+input_eye_scan_path = f"data\ia_Paragraph_ordinary.csv"
 # Output file
-dwell_time_path = "ia_dwell_time_simple.csv"
-kenlm_surprisal_path = "kenlm_surprisals_simple.csv"
-merged_path = "merged_surprisal_dwell.csv"
+dwell_time_path = f"pre_processing_data\ia_dwell_time.csv"
+kenlm_surprisal_path = f"pre_processing_data\kenlm_surprisals.csv"
+merged_kenlm_dwell_time_path = f"pre_processing_data\merged_surprisal_dwell_kenlm.csv"
+pythia_surprisal_path = f"pre_processing_data/pythia70M_surprisals.csv"
+merged_path = f"pre_processing_data/merged_surprisal_dwell_kenlm_pythia.csv"
 # Load KenLM model once
-trained_model_path = "wikitext103_trigram.binary"
+trained_model_path = "training_models_saved_files\wikitext103_trigram.binary"
 kenlm_trigram_model = kenlm.Model(trained_model_path)
+# training data for Pythia 70M
+pythia_data_file_path = "training_models_saved_files/wikitext103_train.txt"
 
+##############################################################################################
 def create_dwell_time_file(output_dwell_time_path, input_eye_scan_path):
     """
     Create a CSV file with participant_id, TRIAL_INDEX, word, and IA_DWELL_TIME.
@@ -45,6 +52,7 @@ def create_dwell_time_file(output_dwell_time_path, input_eye_scan_path):
     print("Dwell time file written:", output_dwell_time_path)
 
 
+##############################################################################################
 # Define function to compute surprisal of kenlm model
 def word_surprisal_kenlm(model, context, word):
     full_sentence = context + " " + word
@@ -88,7 +96,8 @@ def create_surprisal_kenlm_file(output_kenlm_surprisal_path, input_eye_scan_path
     print("Surprisal file written:", output_kenlm_surprisal_path)
 
 
-def merge_surprisal_dwell(kenlm_surprisal_path, dwell_time_path, merged_path):
+##############################################################################################
+def merge_surprisal_dwell_kenlm(kenlm_surprisal_path, dwell_time_path, merged_path):
     """
     Merge KenLM surprisal and dwell time dataframes on participant_id, TRIAL_INDEX, and word.
     """
@@ -105,6 +114,43 @@ def merge_surprisal_dwell(kenlm_surprisal_path, dwell_time_path, merged_path):
     print(f"Merged file saved: {merged_path}")
 
 
+##############################################################################################
+def is_title_line(text):
+    # Matches lines like = Title =, == Section ==, etc.
+    return bool(re.match(r"^=+.*=+$", text.strip()))
+
+def create_train_file_for_pythia():
+    # dataset_text_file_path = "wikitext103_train.txt"
+    # Load the wikitext-103-raw-v1 dataset
+    dataset = load_dataset("Salesforce/wikitext", "wikitext-103-raw-v1")
+
+    # create the train file
+    with open(pythia_data_file_path, "w", encoding="utf-8") as f:
+        for example in dataset["train"]:
+            text = example["text"].strip()
+            if text and not is_title_line(text):
+                f.write(text + "\n")
+
+
+###############################################################################################
+def merge_surprisal_dwell_kenlm_and_pythia(merged_kenlm_dwell_time_path, pythia_surprisal_path, merged_path):
+    """
+    Merge KenLM surprisal and dwell time dataframes on participant_id, TRIAL_INDEX, and word.
+    """
+    # Load both
+    merged_kenlm_dwell_time_df = pd.read_csv(merged_kenlm_dwell_time_path)
+    pythia_surprisal_df = pd.read_csv(pythia_surprisal_path)
+
+    # Merge
+    merged = pd.merge(merged_kenlm_dwell_time_df, pythia_surprisal_df, on=["participant_id", "TRIAL_INDEX", "IA_ID", "word"], how="inner")
+    print("Finished merging dataframes")
+
+    # Save merged file
+    merged.to_csv(merged_path, index=False)
+    print(f"Merged file saved: {merged_path}")
+
+
+##############################################################################################
 def create_merge_file_from_scratch(input_eye_scan_path, dwell_time_path, kenlm_surprisal_path, merged_path, 
                                    kenlm_trigram_model, dwell_time_file_exists=False, kenlm_surprisal_file_exists=False):
     """
@@ -114,7 +160,8 @@ def create_merge_file_from_scratch(input_eye_scan_path, dwell_time_path, kenlm_s
         create_dwell_time_file(dwell_time_path, input_eye_scan_path)
     if not kenlm_surprisal_file_exists:
         create_surprisal_kenlm_file(kenlm_surprisal_path, input_eye_scan_path, kenlm_trigram_model)
-    merge_surprisal_dwell(kenlm_surprisal_path, dwell_time_path, merged_path)
+    merge_surprisal_dwell_kenlm(kenlm_surprisal_path, dwell_time_path, merged_kenlm_dwell_time_path)
+    merge_surprisal_dwell_kenlm_and_pythia(merged_kenlm_dwell_time_path, pythia_surprisal_path, merged_path)
 
 
 if __name__ == "__main__":
