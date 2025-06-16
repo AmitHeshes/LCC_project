@@ -161,7 +161,7 @@ def main(csv_file, scatter_output=None, hexbin_output=None, plot_type='both'):
 
 if __name__ == "__main__":
     # Configuration
-    csv_file = "C:/Users/raque/Desktop/LCC_project/pre_processing_data/merged_surprisal_dwell_kenlm_pythia.csv"
+    csv_file = "pre_processing_data/merged_surprisal_dwell_kenlm_pythia.csv"
     
     # Optional: specify output file names
     scatter_output = "surprisal_correlation_scatter.png"
