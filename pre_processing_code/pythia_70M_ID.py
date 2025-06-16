@@ -121,7 +121,7 @@ def write_results(output_file, grouped_data, model, tokenizer):
                 writer.writerow([participant_id, trial_index, word, ia_id, surprisal])
 
 
-def main(csv_file="ia_Paragraph_ordinary.csv", output_file="pythia70M_surprisals_ID.csv", 
+def create_pythia70M_surprisals_file(csv_file="ia_Paragraph_ordinary.csv", output_file="pythia70M_surprisals_ID.csv", 
          model_name="EleutherAI/pythia-70m"):
     """Main function to orchestrate the surprisal calculation process."""
     # Load data
@@ -141,4 +141,4 @@ if __name__ == "__main__":
     csv_file = "ia_Paragraph_ordinary.csv"
     output_file = "pythia70M_surprisals_ID.csv"
     
-    main(csv_file, output_file)
+    create_pythia70M_surprisals_file(csv_file, output_file)

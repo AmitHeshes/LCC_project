@@ -7,11 +7,11 @@ from scipy.stats import pearsonr
 import warnings
 warnings.filterwarnings('ignore')
 
-merged_path = "pre_processing_data\merged_surprisal_dwell_kenlm_pythia.csv"
+merged_path = "pre_processing_data\\merged_surprisal_dwell_kenlm_pythia.csv"
 # outputs paths
 results_folder = "results_constructed_part1"
-output_graph_path = results_folder + "/surprisals_correlation_scatter.png"
-output_summary_path = results_folder + "/summary_statistics_surprsial_kenlm_surprisal_pythia_graph.csv"
+output_graph_path = results_folder + "\\surprisals_correlation_scatter.png"
+output_summary_path = results_folder + "\\summary_statistics_surprsial_kenlm_surprisal_pythia_graph.csv"
 
 
 def load_surprisal_data(csv_file):

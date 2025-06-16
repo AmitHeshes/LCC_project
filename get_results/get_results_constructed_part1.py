@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-merged_path = "pre_processing_data\merged_surprisal_dwell_kenlm_pythia.csv"
+merged_path = "pre_processing_data\\merged_surprisal_dwell_kenlm_pythia.csv"
 results_folder = "results_constructed_part1"
 
 model_name_to_model_surprisal_column = {
@@ -23,8 +23,8 @@ def get_praph_results_part1(merged_dataframe, model_name="kenlm"):
     plt.figure(figsize=(8, 6))
     sns.regplot(x="IA_DWELL_TIME", y=model_surprisal_column, data=merged_dataframe, scatter_kws={"s": 10}, line_kws={"color": "red"})
     plt.title(f"Correlation between {model_name} Surprisal and IA DWELL TIME")
-    plt.xlabel(f"{model_name} Surprisal")
-    plt.ylabel("IA DWELL TIME (Total Fixation Duration)")
+    plt.xlabel("IA DWELL TIME (Total Fixation Duration)")
+    plt.ylabel(f"{model_name} Surprisal")
 
     plt.tight_layout()
     plt.savefig(results_folder + f"\{model_name}_surprisal_vs_dwelltime.png")  # Save the plot
