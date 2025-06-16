@@ -1,9 +1,9 @@
 import pandas as pd
 from tqdm import tqdm
 
-merged_path = "pre_processing_data/merged_surprisal_dwell_kenlm_pythia.csv"
-data_path = "data/ia_Paragraph_ordinary.csv"
-reconstructed_examples_file = "results_constructed_part1/reconstructed_paragraphs.csv"
+merged_path = "pre_processing_data\\merged_surprisal_dwell_kenlm_pythia.csv"
+data_path = "data\\ia_Paragraph_ordinary.csv"
+reconstructed_examples_file = "results_constructed_part1\\reconstructed_paragraphs.csv"
 
 def define_regions():
     regions = {
