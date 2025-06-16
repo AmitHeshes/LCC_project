@@ -7,6 +7,12 @@ from scipy.stats import pearsonr
 import warnings
 warnings.filterwarnings('ignore')
 
+merged_path = "pre_processing_data\\merged_surprisal_dwell_kenlm_pythia.csv"
+# outputs paths
+results_folder = "results_constructed_part1"
+output_graph_path = results_folder + "\\surprisals_correlation_scatter.png"
+output_summary_path = results_folder + "\\summary_statistics_surprsial_kenlm_surprisal_pythia_graph.csv"
+
 
 def load_surprisal_data(csv_file):
     """Load the surprisal data from CSV file."""
@@ -78,19 +84,19 @@ def create_scatter_plot(df, stats_dict, output_file=None, figsize=(10, 8)):
               fontsize=14, fontweight='bold')
     
     # Add statistics text box
-    stats_text = f"""Statistics:
-    r = {stats_dict['correlation']:.3f}
-    R² = {stats_dict['r_squared']:.3f}
-    p = {stats_dict['p_value']:.2e}
-    n = {len(df):,} words"""
+    # stats_text = f"""Statistics:
+    # r = {stats_dict['correlation']:.3f}
+    # R² = {stats_dict['r_squared']:.3f}
+    # p = {stats_dict['p_value']:.2e}
+    # n = {len(df):,} words"""
     
-    plt.text(0.05, 0.95, stats_text, transform=plt.gca().transAxes, 
-             verticalalignment='top', bbox=dict(boxstyle='round', facecolor='white', alpha=0.8),
-             fontsize=10)
+    # plt.text(0.05, 0.95, stats_text, transform=plt.gca().transAxes, 
+    #          verticalalignment='top', bbox=dict(boxstyle='round', facecolor='white', alpha=0.8),
+    #          fontsize=10)
     
     # Add grid and legend
     plt.grid(True, alpha=0.3)
-    plt.legend(loc='lower right')
+    # plt.legend(loc='lower right')
     
     # Tight layout
     plt.tight_layout()
@@ -102,7 +108,7 @@ def create_scatter_plot(df, stats_dict, output_file=None, figsize=(10, 8)):
     
     plt.show()
 
-def print_summary_statistics(df, stats_dict):
+def print_summary_statistics(df, stats_dict, output_summary_path):
     """Print summary statistics about the data and correlation."""
     print("\n" + "="*50)
     print("SUMMARY STATISTICS")
@@ -136,8 +142,25 @@ def print_summary_statistics(df, stats_dict):
     else:
         print("  Significance: Not significant (p >= 0.05)")
 
+    # save all printed information to csv
+    summary_stats = {
+        'Total Words': len(df),
+        'KenLM Mean': df['kenlm_surprisal'].mean(),
+        'KenLM Std': df['kenlm_surprisal'].std(),
+        'KenLM Min': df['kenlm_surprisal'].min(),
+        'KenLM Max': df['kenlm_surprisal'].max(),
+        'Pythia Mean': df['pythia70M_surprisal'].mean(),
+        'Pythia Std': df['pythia70M_surprisal'].std(),
+        'Pythia Min': df['pythia70M_surprisal'].min(),
+        'Pythia Max': df['pythia70M_surprisal'].max(),
+        'Pearson Correlation': stats_dict['correlation'],
+        'R-squared': stats_dict['r_squared'],
+        'P-value': stats_dict['p_value']
+    }
+    summary_df = pd.DataFrame([summary_stats])
+    summary_df.to_csv(output_summary_path, index=False)
 
-def main(csv_file, scatter_output=None, hexbin_output=None, plot_type='both'):
+def main(csv_file, scatter_output, output_summary_path):
     """Main function to analyze and plot surprisal correlations."""
     
     # Load and clean data
@@ -153,7 +176,7 @@ def main(csv_file, scatter_output=None, hexbin_output=None, plot_type='both'):
                                     df_clean['pythia70M_surprisal'])
     
     # Print summary
-    print_summary_statistics(df_clean, stats_dict)
+    print_summary_statistics(df_clean, stats_dict, output_summary_path)
     
     # Create plot
     create_scatter_plot(df_clean, stats_dict, scatter_output)
@@ -161,10 +184,10 @@ def main(csv_file, scatter_output=None, hexbin_output=None, plot_type='both'):
 
 if __name__ == "__main__":
     # Configuration
-    csv_file = "pre_processing_data/merged_surprisal_dwell_kenlm_pythia.csv"
+    csv_file = "C:/Users/raque/Desktop/LCC_project/pre_processing_data/merged_surprisal_dwell_kenlm_pythia.csv"
     
     # Optional: specify output file names
     scatter_output = "surprisal_correlation_scatter.png"
     
     # Run analysis
-    main(csv_file, scatter_output, plot_type='both')
+    main(merged_path, output_graph_path, output_summary_path)
