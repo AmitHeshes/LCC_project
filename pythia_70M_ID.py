@@ -12,7 +12,7 @@ import torch.nn.functional as F
 csv_file = "ia_Paragraph_ordinary.csv"
 output_file = "pythia70M_surprisals_ID.csv"
 
-# Load CSV with IA_ID added
+# Load CSV with IA_ID
 df = pd.read_csv(csv_file, usecols=["participant_id", "TRIAL_INDEX", "IA_LABEL", "IA_ID"])
 grouped = df.groupby(["participant_id", "TRIAL_INDEX"])
 
@@ -68,17 +68,17 @@ with open(output_file, "w", newline='', encoding='utf-8') as f_out:
             else:
                 word_surprisals[word_id] += s
 
-        # Write per word
-        for i, row in group.iterrows():
-            word = str(row["IA_LABEL"]).strip()
-            ia_id = row["IA_ID"]
+        # === FINAL: Correct writing loop ===
+        # Loop over words + IA_IDs with correct alignment
+        for word_id, (word, ia_id) in enumerate(zip(words, group["IA_ID"].tolist())):
+            word = str(word).strip()
 
             if word in [".", ",", "", " "] or pd.isna(word):
                 surprisal = 0.0
-            elif i in word_surprisals:
-                surprisal = word_surprisals[i]
+            elif word_id in word_surprisals:
+                surprisal = word_surprisals[word_id]
             else:
-                surprisal = 0.0  # Fallback if tokenization mismatch
+                surprisal = 0.0  # Fallback
 
             writer.writerow([participant_id, trial_index, word, ia_id, surprisal])
 
