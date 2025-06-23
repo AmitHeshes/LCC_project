@@ -3,3 +3,4 @@ wikitext103_train.txt
 wikitext103_trigram.arpa
 wikitext103_trigram.binary
 ia_Paragraph_ordinary.csv.zip
+pre_processing_code/__pycache__/

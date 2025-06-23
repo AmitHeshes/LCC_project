@@ -12,15 +12,17 @@ input_eye_scan_path = f"data\\ia_Paragraph_ordinary.csv"
 # Output file
 dwell_time_path = f"pre_processing_data\\ia_dwell_time.csv"
 kenlm_surprisal_path = f"pre_processing_data\\kenlm_surprisals.csv"
-pythia_surprisal_path = f"pre_processing_data\\pythia70M_surprisals_try_modular_version.csv"
+# pythia_surprisal_path = f"pre_processing_data\\pythia70M_surprisals_try_modular_version.csv"
+pythia_surprisal_path = f"pre_processing_data\\pythia70M_surprisals_new_try.csv"
 merged_kenlm_dwell_time_path = f"pre_processing_data\\merged_surprisal_dwell_kenlm.csv"
 # pythia_surprisal_path = f"pre_processing_data\\pythia70M_surprisals.csv"
-merged_path = f"pre_processing_data\\merged_surprisal_dwell_kenlm_pythia.csv"
+# merged_path = f"pre_processing_data\\merged_surprisal_dwell_kenlm_pythia.csv"
+merged_path = f"pre_processing_data\\merged_surprisal_dwell_kenlm_pythia_new_try.csv"
 # Load KenLM model once
 trained_model_path = "training_models_saved_files\\wikitext103_trigram.binary"
 kenlm_trigram_model = kenlm.Model(trained_model_path)
 # training data for Pythia 70M
-pythia_data_file_path = "training_models_saved_files\\wikitext103_train.txt"
+pythia_train_data_file_path = "training_models_saved_files\\wikitext103_train.txt"
 
 ##############################################################################################
 def create_dwell_time_file(output_dwell_time_path, input_eye_scan_path):
@@ -127,7 +129,7 @@ def create_train_file_for_pythia():
     dataset = load_dataset("Salesforce/wikitext", "wikitext-103-raw-v1")
 
     # create the train file
-    with open(pythia_data_file_path, "w", encoding="utf-8") as f:
+    with open(pythia_train_data_file_path, "w", encoding="utf-8") as f:
         for example in dataset["train"]:
             text = example["text"].strip()
             if text and not is_title_line(text):
@@ -171,5 +173,6 @@ def create_merge_file_from_scratch(input_eye_scan_path, dwell_time_path, kenlm_s
 
 
 if __name__ == "__main__":
-    create_merge_file_from_scratch(input_eye_scan_path, dwell_time_path, kenlm_surprisal_path, merged_kenlm_dwell_time_path, 
-                                   kenlm_trigram_model, pythia_surprisal_path, merged_path)
+    # create_merge_file_from_scratch(input_eye_scan_path, dwell_time_path, kenlm_surprisal_path, merged_kenlm_dwell_time_path, 
+                                #    kenlm_trigram_model, pythia_surprisal_path, merged_path)
+    merge_surprisal_dwell_kenlm_and_pythia(merged_kenlm_dwell_time_path, pythia_surprisal_path, merged_path)

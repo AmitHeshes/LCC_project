@@ -7,12 +7,19 @@ from scipy.stats import pearsonr
 import warnings
 warnings.filterwarnings('ignore')
 
-merged_path = "pre_processing_data\\merged_surprisal_dwell_kenlm_pythia.csv"
+# merged_path = "pre_processing_data\\merged_surprisal_dwell_kenlm_pythia.csv"
+merged_path = f"pre_processing_data\\merged_surprisal_dwell_kenlm_pythia_new_try.csv"
 # outputs paths
-results_folder = "results_constructed_part1"
+results_folder = "results_constructed_part1_new_try"
 output_graph_path = results_folder + "\\surprisals_correlation_scatter.png"
 output_summary_path = results_folder + "\\summary_statistics_surprsial_kenlm_surprisal_pythia_graph.csv"
-
+surprisal_variation_to_model_surprisal_column = {
+    "kenlm": "kenlm_surprisal",
+    "pythia": "pythia70M_surprisal",
+    "pythia_sum": "pythia_sum_surprisal",
+    "pythia_average": "pythia_average_surprisal"
+}
+pythia_surprisal_variation = "pythia_sum"
 
 def load_surprisal_data(csv_file):
     """Load the surprisal data from CSV file."""
@@ -21,16 +28,18 @@ def load_surprisal_data(csv_file):
     return df
 
 
-def clean_data(df):
+def clean_data(df, pythia_surprisal_variation):
     """Clean the data by removing any rows with missing values."""
+    pythia_column = surprisal_variation_to_model_surprisal_column[pythia_surprisal_variation]
+
     initial_count = len(df)
     
     # Remove rows with NaN values in surprisal columns
-    df_clean = df.dropna(subset=['kenlm_surprisal', 'pythia70M_surprisal'])
+    df_clean = df.dropna(subset=['kenlm_surprisal', pythia_column])
     
     # Remove any infinite values
     df_clean = df_clean[np.isfinite(df_clean['kenlm_surprisal']) & 
-                       np.isfinite(df_clean['pythia70M_surprisal'])]
+                       np.isfinite(df_clean[pythia_column])]
     
     final_count = len(df_clean)
     print(f"After cleaning: {final_count} data points ({initial_count - final_count} removed)")
@@ -57,13 +66,15 @@ def calculate_statistics(x, y):
     }
 
 
-def create_scatter_plot(df, stats_dict, output_file=None, figsize=(10, 8)):
+def create_scatter_plot(df, stats_dict, pythia_surprisal_variation, output_file=None, figsize=(10, 8)):
     """Create a scatter plot comparing n-gram vs neural model surprisals."""
     
+    pythia_column = surprisal_variation_to_model_surprisal_column[pythia_surprisal_variation]
+
     plt.figure(figsize=figsize)
     
     # Create scatter plot
-    plt.scatter(df['kenlm_surprisal'], df['pythia70M_surprisal'], 
+    plt.scatter(df['kenlm_surprisal'], df[pythia_column], 
                alpha=0.6, s=20, color='steelblue', edgecolors='white', linewidth=0.5)
     
     # Add trend line
@@ -72,8 +83,8 @@ def create_scatter_plot(df, stats_dict, output_file=None, figsize=(10, 8)):
     plt.plot(x_line, y_line, 'r--', alpha=0.8, linewidth=2, label='Best fit line')
     
     # Add diagonal reference line (perfect correlation)
-    min_val = min(df['kenlm_surprisal'].min(), df['pythia70M_surprisal'].min())
-    max_val = max(df['kenlm_surprisal'].max(), df['pythia70M_surprisal'].max())
+    min_val = min(df['kenlm_surprisal'].min(), df[pythia_column].min())
+    max_val = max(df['kenlm_surprisal'].max(), df[pythia_column].max())
     plt.plot([min_val, max_val], [min_val, max_val], 'k:', alpha=0.5, 
              linewidth=1, label='Perfect correlation')
     
@@ -108,7 +119,7 @@ def create_scatter_plot(df, stats_dict, output_file=None, figsize=(10, 8)):
     
     plt.show()
 
-def print_summary_statistics(df, stats_dict, output_summary_path):
+def print_summary_statistics(df, stats_dict, output_summary_path, pythia_surprisal_variation):
     """Print summary statistics about the data and correlation."""
     print("\n" + "="*50)
     print("SUMMARY STATISTICS")
@@ -122,11 +133,12 @@ def print_summary_statistics(df, stats_dict, output_summary_path):
     print(f"  Min:  {df['kenlm_surprisal'].min():.3f}")
     print(f"  Max:  {df['kenlm_surprisal'].max():.3f}")
     
+    pythia_column = surprisal_variation_to_model_surprisal_column[pythia_surprisal_variation]
     print("\nNeural Model (Pythia-70M) Surprisal:")
-    print(f"  Mean: {df['pythia70M_surprisal'].mean():.3f}")
-    print(f"  Std:  {df['pythia70M_surprisal'].std():.3f}")
-    print(f"  Min:  {df['pythia70M_surprisal'].min():.3f}")
-    print(f"  Max:  {df['pythia70M_surprisal'].max():.3f}")
+    print(f"  Mean: {df[pythia_column].mean():.3f}")
+    print(f"  Std:  {df[pythia_column].std():.3f}")
+    print(f"  Min:  {df[pythia_column].min():.3f}")
+    print(f"  Max:  {df[pythia_column].max():.3f}")
     
     print("\nCorrelation Analysis:")
     print(f"  Pearson correlation: {stats_dict['correlation']:.4f}")
@@ -149,10 +161,10 @@ def print_summary_statistics(df, stats_dict, output_summary_path):
         'KenLM Std': df['kenlm_surprisal'].std(),
         'KenLM Min': df['kenlm_surprisal'].min(),
         'KenLM Max': df['kenlm_surprisal'].max(),
-        'Pythia Mean': df['pythia70M_surprisal'].mean(),
-        'Pythia Std': df['pythia70M_surprisal'].std(),
-        'Pythia Min': df['pythia70M_surprisal'].min(),
-        'Pythia Max': df['pythia70M_surprisal'].max(),
+        'Pythia Mean': df[pythia_column].mean(),
+        'Pythia Std': df[pythia_column].std(),
+        'Pythia Min': df[pythia_column].min(),
+        'Pythia Max': df[pythia_column].max(),
         'Pearson Correlation': stats_dict['correlation'],
         'R-squared': stats_dict['r_squared'],
         'P-value': stats_dict['p_value']
@@ -160,12 +172,12 @@ def print_summary_statistics(df, stats_dict, output_summary_path):
     summary_df = pd.DataFrame([summary_stats])
     summary_df.to_csv(output_summary_path, index=False)
 
-def main(csv_file, scatter_output, output_summary_path):
+def main(csv_file, scatter_output, output_summary_path, pythia_surprisal_variation):
     """Main function to analyze and plot surprisal correlations."""
     
     # Load and clean data
     df = load_surprisal_data(csv_file)
-    df_clean = clean_data(df)
+    df_clean = clean_data(df, pythia_surprisal_variation)
     
     if len(df_clean) == 0:
         print("No valid data points found after cleaning!")
@@ -173,21 +185,23 @@ def main(csv_file, scatter_output, output_summary_path):
     
     # Calculate statistics
     stats_dict = calculate_statistics(df_clean['kenlm_surprisal'], 
-                                    df_clean['pythia70M_surprisal'])
+                                    df_clean[surprisal_variation_to_model_surprisal_column[pythia_surprisal_variation]])
     
     # Print summary
-    print_summary_statistics(df_clean, stats_dict, output_summary_path)
+    print_summary_statistics(df_clean, stats_dict, output_summary_path, pythia_surprisal_variation)
     
     # Create plot
-    create_scatter_plot(df_clean, stats_dict, scatter_output)
+    create_scatter_plot(df_clean, stats_dict, pythia_surprisal_variation, scatter_output)
     
 
 if __name__ == "__main__":
     # Configuration
-    csv_file = "C:/Users/raque/Desktop/LCC_project/pre_processing_data/merged_surprisal_dwell_kenlm_pythia.csv"
-    
+    # csv_file = "C:/Users/raque/Desktop/LCC_project/pre_processing_data/merged_surprisal_dwell_kenlm_pythia.csv"
+    csv_file = merged_path
+
     # Optional: specify output file names
     scatter_output = "surprisal_correlation_scatter.png"
     
     # Run analysis
-    main(merged_path, output_graph_path, output_summary_path)
+    main(merged_path, f"{output_graph_path[:-4]}_sum.png", f"{output_summary_path[:-4]}_sum.png", "pythia_sum")
+    main(merged_path, f"{output_graph_path[:-4]}_average.png", f"{output_summary_path[:-4]}_average.png", "pythia_average")
