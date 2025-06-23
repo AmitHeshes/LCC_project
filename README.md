@@ -6,3 +6,6 @@
 *Run in bash (linux) the following line (with parameter change - name of binary is model_3gram.binary): ./bin/build_binary text.arpa text.binary
 *Move the arpa and binary model files to git directory
 *Run surprisal_sanity to check the pipline worked  
+
+
+Added two variations of pythia surprisals - one which gives average surprisals of the tokens consisting each word (according to pythia 70M tokenizer), and the other summing over these tokens (like multiply probabilities).
