@@ -203,5 +203,5 @@ if __name__ == "__main__":
     scatter_output = "surprisal_correlation_scatter.png"
     
     # Run analysis
-    main(merged_path, f"{output_graph_path[:-4]}_sum.png", f"{output_summary_path[:-4]}_sum.png", "pythia_sum")
-    main(merged_path, f"{output_graph_path[:-4]}_average.png", f"{output_summary_path[:-4]}_average.png", "pythia_average")
+    main(merged_path, f"{output_graph_path[:-4]}_sum.png", f"{output_summary_path[:-4]}_sum.csv", "pythia_sum")
+    main(merged_path, f"{output_graph_path[:-4]}_average.png", f"{output_summary_path[:-4]}_average.csv", "pythia_average")
