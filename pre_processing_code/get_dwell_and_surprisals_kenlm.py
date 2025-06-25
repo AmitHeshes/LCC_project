@@ -23,6 +23,7 @@ trained_model_path = "training_models_saved_files\\wikitext103_trigram.binary"
 kenlm_trigram_model = kenlm.Model(trained_model_path)
 # training data for Pythia 70M
 pythia_train_data_file_path = "training_models_saved_files\\wikitext103_train.txt"
+COLUMNS_TO_ADD = ["subtlex_frequency", "word_length"]
 
 ##############################################################################################
 def create_dwell_time_file(output_dwell_time_path, input_eye_scan_path):
@@ -153,10 +154,17 @@ def merge_surprisal_dwell_kenlm_and_pythia(merged_kenlm_dwell_time_path, pythia_
     merged.to_csv(merged_path, index=False)
     print(f"Merged file saved: {merged_path}")
 
+def add_columns_to_merged_file(original_data, merged_path, columns_to_add):
+    merged_df = pd.read_csv(merged_path)
+    key_columns = ["participant_id", "TRIAL_INDEX", "IA_ID"]
+    original_df = pd.read_csv(original_data, usecols=key_columns + columns_to_add)
+    result = pd.merge(merged_df, original_df, on=key_columns, how='inner')
+    result.to_csv(merged_path, index=False)
+
 
 ##############################################################################################
 def create_merge_file_from_scratch(input_eye_scan_path, dwell_time_path, kenlm_surprisal_path, merged_kenlm_dwell_time_path, 
-                                   kenlm_trigram_model, pythia_surprisal_path, merged_path, dwell_time_file_exists=True, kenlm_surprisal_file_exists=True, pythia_surprisal_file_exists=True):
+                                   kenlm_trigram_model, pythia_surprisal_path, merged_path, columns_to_add, dwell_time_file_exists=True, kenlm_surprisal_file_exists=True, pythia_surprisal_file_exists=True):
     """
     Create both dwell time and KenLM surprisal files, then merge them.
     """
@@ -165,14 +173,15 @@ def create_merge_file_from_scratch(input_eye_scan_path, dwell_time_path, kenlm_s
     if not kenlm_surprisal_file_exists:
         create_surprisal_kenlm_file(kenlm_surprisal_path, input_eye_scan_path, kenlm_trigram_model)
     merge_surprisal_dwell_kenlm(kenlm_surprisal_path, dwell_time_path, merged_kenlm_dwell_time_path)
-    if not pythia_surprisal_file_exists:
-        # create_train_file_for_pythia()
-        create_pythia70M_surprisals_file(input_eye_scan_path, pythia_surprisal_path)
+    # if not pythia_surprisal_file_exists:
+    #     # create_train_file_for_pythia()
+    #     create_pythia70M_surprisals_file(input_eye_scan_path, pythia_surprisal_path)
     merge_surprisal_dwell_kenlm_and_pythia(merged_kenlm_dwell_time_path, pythia_surprisal_path, merged_path)
+    add_columns_to_merged_file(input_eye_scan_path, merged_path, columns_to_add)
     
 
 
 if __name__ == "__main__":
     # create_merge_file_from_scratch(input_eye_scan_path, dwell_time_path, kenlm_surprisal_path, merged_kenlm_dwell_time_path, 
                                 #    kenlm_trigram_model, pythia_surprisal_path, merged_path)
-    merge_surprisal_dwell_kenlm_and_pythia(merged_kenlm_dwell_time_path, pythia_surprisal_path, merged_path)
+    merge_surprisal_dwell_kenlm_and_pythia(merged_kenlm_dwell_time_path, pythia_surprisal_path, merged_path, COLUMNS_TO_ADD)
