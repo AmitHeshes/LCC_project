@@ -1,0 +1,2 @@
+Total Words,Dwell Time Mean,Dwell Time Std,Dwell Time Min,Dwell Time Max,Pythia-70M (Sum) Mean,Pythia-70M (Sum) Std,Pythia-70M (Sum) Min,Pythia-70M (Sum) Max,Pearson Correlation,R-squared,P-value
+1104883,203.00756098156998,256.5519965365492,0,16729,4.869888978129491,3.903773125605123,0.0,51.418701171875,0.28321379683495707,0.08021005471767234,0.0
