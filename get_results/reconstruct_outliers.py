@@ -56,8 +56,10 @@ def get_examples(data, num_examples,
     regions = define_regions(sum_or_average)
     examples = {key: [] for key in regions.keys()}
 
-    for index, row in tqdm(data.iterrows()):
-        if all(len(examples[region]) >= num_examples for region in examples):
+    max_iterations = len(data)
+
+    for i, (index, row) in enumerate(tqdm(data.iterrows())):
+        if i >= max_iterations or all(len(examples[region]) >= num_examples for region in examples):
             break
         pythia_surprisal = row[pythia_surprisal_column]
         kenlm_surprisal = row[kenlm_surprisal_column]

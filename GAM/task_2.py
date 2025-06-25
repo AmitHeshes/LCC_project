@@ -5,9 +5,11 @@ import matplotlib.pyplot as plt
 
 # Load data
 INPUT_DATA_PATH = "merge_file.csv"
+frequency_column = 'subtlex_frequency'
+
+
 df = pd.read_csv(INPUT_DATA_PATH)
 
-frequency_column = 'subtlex_frequency'
 # Control variables
 df['log_freq'] = np.log2(df[frequency_column] + 1)
 # Assuming 'word_length' column already exists

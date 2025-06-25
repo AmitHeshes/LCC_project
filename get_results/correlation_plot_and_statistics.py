@@ -8,38 +8,41 @@ import warnings
 warnings.filterwarnings('ignore')
 
 # merged_path = "pre_processing_data\\merged_surprisal_dwell_kenlm_pythia.csv"
-merged_path = f"pre_processing_data\\merged_surprisal_dwell_kenlm_pythia_new_try.csv"
+# merged_path = f"pre_processing_data\\merged_surprisal_dwell_kenlm_pythia.csv"
+merged_path = "pre_processing_data\\merged_after_spilover.csv"
 # outputs paths
-results_folder = "results_constructed_part1_new_try\\correlations"
-output_graph_path = results_folder + "\\surprisals_correlation_scatter.png"
-output_summary_path = results_folder + "\\summary_statistics_surprsial_kenlm_surprisal_pythia_graph.csv"
+results_folder = "results_constructed_part1_updated\\correlations"
 column_description_to_column_name = {
     "kenlm": "kenlm_surprisal",
     "pythia": "pythia70M_surprisal",
     "pythia_sum": "pythia_sum_surprisal",
     "pythia_average": "pythia_average_surprisal",
-    "dwell_time": "IA_DWELL_TIME"
+    "dwell_time": "IA_DWELL_TIME",
+    "next_word_IA_DWELL_TIME": "next_word_IA_DWELL_TIME",
 }
 axis_titles = {
     "kenlm": "N-gram Model Surprisal (KenLM)",
     "pythia": "Neural Model Surprisal (Pythia-70M)",
     "pythia_sum": "Neural Model Surprisal (Pythia-70M)",
     "pythia_average": "Neural Model Surprisal (Pythia-70M)",
-    "dwell_time": "Dwell Time (ms)"
+    "dwell_time": "Dwell Time (ms)",
+    "next_word_IA_DWELL_TIME": "Next Word Dwell Time (ms)"
 }
 graph_titles = {
     "kenlm": "N-gram Surprisal",
     "pythia": "Neural Model Surprisal",
     "pythia_sum": "Neural Model Surprisal",
     "pythia_average": "Neural Model Surprisal",
-    "dwell_time": "Dwell Time"
+    "dwell_time": "Dwell Time",
+    "next_word_IA_DWELL_TIME": "Next Word Dwell Time"
 }
 short_name = {
     "kenlm": "KenLM",
     "pythia": "Pythia-70M",
     "pythia_sum": "Pythia-70M (Sum)",
     "pythia_average": "Pythia-70M (Average)",
-    "dwell_time": "Dwell Time"
+    "dwell_time": "Dwell Time",
+    "next_word_IA_DWELL_TIME": "Next Word Dwell Time"
 }
 
 def load_surprisal_data(csv_file):
@@ -228,12 +231,24 @@ if __name__ == "__main__":
     csv_file = merged_path
 
     # Optional: specify output file names
-    scatter_output = "surprisal_correlation_scatter.png"
+    # scatter_output = "surprisal_correlation_scatter.png"
     
     # Run analysis
-    
-    main(merged_path, f"{results_folder}\\correlation_scatter_kenlm_vs_pythia_sum.png", f"{results_folder}\\summary_statistics_kenlm_vs_pythia_sum.csv", x_column_desc="kenlm", y_column_desc="pythia_sum", does_to_plot_perfect_corellation=True)
-    main(merged_path, f"{results_folder}\\correlation_scatter_kenlm_vs_pythia_average.png", f"{results_folder}\\summary_statistics_kenlm_vs_pythia_average.csv", x_column_desc="kenlm", y_column_desc="pythia_average", does_to_plot_perfect_corellation=True)
-    main(merged_path, f"{results_folder}\\correlation_scatter_kenlm_vs_dwell_time.png", f"{results_folder}\\summary_statistics_kenlm_vs_dwell_time.csv", x_column_desc="dwell_time", y_column_desc="kenlm", does_to_plot_perfect_corellation=False)
-    main(merged_path, f"{results_folder}\\correlation_scatter_pythia_sum_vs_dwell_time.png", f"{results_folder}\\summary_statistics_pythia_sum_vs_dwell_time.csv", x_column_desc="dwell_time", y_column_desc="pythia_sum", does_to_plot_perfect_corellation=False)
-    main(merged_path, f"{results_folder}\\correlation_scatter_pythia_average_vs_dwell_time.png", f"{results_folder}\\summary_statistics_pythia_average_vs_dwell_time.csv", x_column_desc="dwell_time", y_column_desc="pythia_average", does_to_plot_perfect_corellation=False)
+    runs = [("kenlm", "pythia_sum", True),
+            ("kenlm", "pythia_average", True),
+            ("kenlm", "dwell_time", False),
+            ("pythia_sum", "dwell_time", False),
+            ("pythia_average", "dwell_time", False),
+            ("kenlm", "next_word_IA_DWELL_TIME", False),
+            ("pythia_sum", "next_word_IA_DWELL_TIME", False),
+            ("pythia_average", "next_word_IA_DWELL_TIME", False)]
+    for x_desc, y_desc, does_to_plot_perfect_corellation in runs:
+        scatter_output = f"{results_folder}\\correlation_scatter_{x_desc}_vs_{y_desc}.png"
+        summary_output = f"{results_folder}\\summary_statistics_{x_desc}_vs_{y_desc}.csv"
+        main(merged_path, scatter_output, summary_output, x_column_desc=x_desc, y_column_desc=y_desc, does_to_plot_perfect_corellation=does_to_plot_perfect_corellation)
+
+    # main(merged_path, f"{results_folder}\\correlation_scatter_kenlm_vs_pythia_sum.png", f"{results_folder}\\summary_statistics_kenlm_vs_pythia_sum.csv", x_column_desc="kenlm", y_column_desc="pythia_sum", does_to_plot_perfect_corellation=True)
+    # main(merged_path, f"{results_folder}\\correlation_scatter_kenlm_vs_pythia_average.png", f"{results_folder}\\summary_statistics_kenlm_vs_pythia_average.csv", x_column_desc="kenlm", y_column_desc="pythia_average", does_to_plot_perfect_corellation=True)
+    # main(merged_path, f"{results_folder}\\correlation_scatter_kenlm_vs_dwell_time.png", f"{results_folder}\\summary_statistics_kenlm_vs_dwell_time.csv", x_column_desc="dwell_time", y_column_desc="kenlm", does_to_plot_perfect_corellation=False)
+    # main(merged_path, f"{results_folder}\\correlation_scatter_pythia_sum_vs_dwell_time.png", f"{results_folder}\\summary_statistics_pythia_sum_vs_dwell_time.csv", x_column_desc="dwell_time", y_column_desc="pythia_sum", does_to_plot_perfect_corellation=False)
+    # main(merged_path, f"{results_folder}\\correlation_scatter_pythia_average_vs_dwell_time.png", f"{results_folder}\\summary_statistics_pythia_average_vs_dwell_time.csv", x_column_desc="dwell_time", y_column_desc="pythia_average", does_to_plot_perfect_corellation=False)

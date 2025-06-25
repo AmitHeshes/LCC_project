@@ -6,7 +6,7 @@ from minicons import scorer
 INPUT_DATA_PATH = "data\\ia_Paragraph_ordinary.csv"
 # INPUT_DATA_PATH = "data\\preview.csv"
 MODEL_NAME = "EleutherAI/pythia-70m"
-OUTPUT_SURPRISALS_PATH = "pre_processing_data\\pythia70M_surprisals_new_try.csv"
+OUTPUT_SURPRISALS_PATH = "pre_processing_data\\pythia70M_surprisals.csv"
 
 def create_surprisals_file_using_pythia(input_data_path, pythia_surprisals_path, model_name):
     print("Loading Pythia model and tokenizer...")
@@ -31,7 +31,7 @@ def create_surprisals_file_using_pythia(input_data_path, pythia_surprisals_path,
         for tokens in tokens_per_word[:-1]:
             num_prev_tokens.append(num_prev_tokens[-1] + len(tokens))
 
-        all_surprisals = sc.token_score(paragraph)
+        all_surprisals = sc.token_score(paragraph, base_two=True)
 
         # calculate surprisals for each word in the group
         for _, row in group.iterrows():
