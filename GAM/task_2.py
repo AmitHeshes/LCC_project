@@ -43,22 +43,13 @@ for label, y_col in reading_measures.items():
     # Fit GAM
     gam = LinearGAM(s(0) + s(1) + s(2)).fit(X, y)
     
-    # Plot with confidence intervals
+    # Plot
     XX = gam.generate_X_grid(term=0, n=500)
     plt.figure(figsize=(7, 4))
-    
-    # Get partial dependence and confidence intervals
-    pdep = gam.partial_dependence(term=0, X=XX)
-    pdep_ci = gam.partial_dependence(term=0, X=XX, width=0.95)
-    
-    plt.plot(XX[:, 0], pdep, 'b-', label='Partial Effect')
-    plt.fill_between(XX[:, 0], pdep_ci[0], pdep_ci[1], alpha=0.3, color='blue')
-    plt.axhline(y=0, color='red', linestyle='--', alpha=0.5, label='Average Effect')
-    
+    plt.plot(XX[:, 0], gam.partial_dependence(term=0, X=XX))
     plt.title(f"Effect of Pythia Surprisal on {label}")
     plt.xlabel("Pythia-70M Surprisal")
-    plt.ylabel(f"Partial Effect on {label}\n(relative to average)")
-    plt.legend()
+    plt.ylabel(label)
     plt.grid(True)
     plt.tight_layout()
     plt.show()
