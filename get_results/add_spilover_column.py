@@ -3,7 +3,7 @@ import pandas as pd
 
 MERGED_PATH_BEFORE_SPILLOVER = "pre_processing_data\\merged_surprisal_dwell_kenlm_pythia.csv"
 MERGED_PATH_AFTER_SPILLOVER = "pre_processing_data\\merged_after_spilover.csv"
-PREV_COLUMNS_TO_SHIFT = ["IA_DWELL_TIME"]
+PREV_COLUMNS_TO_SHIFT = ["IA_DWELL_TIME", "IA_FIRST_RUN_DWELL_TIME", "IA_REGRESSION_PATH_DURATION"]
 NEW_COLUMNS_NAME = [f"next_word_{prev_column_to_shift}" for prev_column_to_shift in PREV_COLUMNS_TO_SHIFT]
 
 def add_spilover_column(merged_path_before_spilover, merged_path_after_spilover, prev_columns_to_shift, new_columns_name):

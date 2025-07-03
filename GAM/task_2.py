@@ -4,8 +4,10 @@ from pygam import LinearGAM, s
 import matplotlib.pyplot as plt
 
 # Load data
-INPUT_DATA_PATH = "pre_processing_data/merged_surprisal_dwell_kenlm_pythia.csv"
+# INPUT_DATA_PATH = "pre_processing_data/merged_surprisal_dwell_kenlm_pythia.csv"
+INPUT_DATA_PATH  = "pre_processing_data\merged_after_spilover.csv"
 frequency_column = 'wordfreq_frequency'
+OUTPUT_IMAGE_PATH = "task2/plots/gam_"
 
 
 df = pd.read_csv(INPUT_DATA_PATH)
@@ -15,9 +17,12 @@ df['log_freq'] = -df[frequency_column]
 
 # List of dependent variables (reading time measures)
 reading_measures = {
+    "Spillover Total Fixation Duration": "next_word_IA_DWELL_TIME",
+    "Spillover Gaze Duration": "next_word_IA_FIRST_RUN_DWELL_TIME",
+    "Spillover Regression Path Duration": "next_word_IA_REGRESSION_PATH_DURATION",
     "Total Fixation Duration": "IA_DWELL_TIME",
     "Gaze Duration": "IA_FIRST_RUN_DWELL_TIME",
-    "Regression Path Duration": "IA_REGRESSION_PATH_DURATION"
+    "Regression Path Duration": "IA_REGRESSION_PATH_DURATION",
 }
 
 # Loop through each reading time measure
@@ -44,18 +49,20 @@ for label, y_col in reading_measures.items():
     gam = LinearGAM(s(0) + s(1) + s(2)).fit(X, y)
     
     # Plot
-    XX = gam.generate_X_grid(term=0, n=500)
+    XX = gam.generate_X_grid(term=0)
     plt.figure(figsize=(7, 4))
-    plt.plot(XX[:, 0], gam.partial_dependence(term=0, X=XX))
+    plt.plot(XX[:, 0], gam.predict(XX))
     plt.title(f"Effect of Pythia Surprisal on {label}")
     plt.xlabel("Pythia-70M Surprisal")
     plt.ylabel(label)
+    plt.xlim(0, 40)
     plt.grid(True)
     plt.tight_layout()
-    plt.show()
+    plt.show(block=False)  # Show the plot without blocking the script
+    plt.pause(1)  # Pause to allow the plot to render
 
     # save the plot
-    plt.savefig(f"task2/plots/gam_{label.replace(' ', '_').lower()}.png")
+    plt.savefig(f"{OUTPUT_IMAGE_PATH}{label.replace(' ', '_').lower()}.png")
 
     # print GAM summary
     print(f"\nGAM Summary for {label}")
