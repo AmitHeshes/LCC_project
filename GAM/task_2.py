@@ -65,7 +65,7 @@ for label, y_col in reading_measures.items():
     
     # Plot
     XX = gam.generate_X_grid(term=0)
-    plt.figure(figsize=(7, 4))
+    plt.figure(figsize=(10, 6))
     plt.plot(XX[:, 0], gam.predict(XX), color='red', linewidth=5)
     title_text = f"Effect of Pythia Surprisal on {label}"
     wrapped_title = textwrap.fill(title_text, width=40)
@@ -83,7 +83,7 @@ for label, y_col in reading_measures.items():
     # plt.pause(1)  # Pause to allow the plot to render
 
     # add scatter plot in the same figure
-    plt.scatter(subset['pythia_sum_surprisal'], y, alpha=0.5, color='gray', s=10)
+    # plt.scatter(subset['pythia_sum_surprisal'], y, alpha=0.5, color='gray', s=10)
 
     # save the plot
     plt.savefig(f"{OUTPUT_IMAGE_PATH}{label.replace(' ', '_').lower()}.png")

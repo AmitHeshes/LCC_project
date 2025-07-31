@@ -6,3 +6,5 @@ ia_Paragraph_ordinary.csv.zip
 pre_processing_code/__pycache__/
 pre_processing_data/merged_surprisal_dwell_kenlm_pythia.csv
 pre_processing_data/merged_after_spilover.csv
+data/ia_Paragraph_information_seeking.csv.zip
+data/ia_Paragraph_information_seeking.csv
