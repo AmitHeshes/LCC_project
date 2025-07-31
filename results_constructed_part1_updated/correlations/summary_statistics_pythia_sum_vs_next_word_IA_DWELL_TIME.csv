@@ -1,2 +1,2 @@
-Total Words,Pythia-70M (Sum) Mean,Pythia-70M (Sum) Std,Pythia-70M (Sum) Min,Pythia-70M (Sum) Max,Next Word Dwell Time Mean,Next Word Dwell Time Std,Next Word Dwell Time Min,Next Word Dwell Time Max,Pearson Correlation,R-squared,P-value
-1094805,7.013522145688521,5.631026624325706,0.0,74.18150520324707,201.8629673777522,254.94589248465763,0.0,16729.0,0.011313835539834637,0.0001280028746224253,2.472316205886186e-32
+Total Words,Pythia-70M (Sum) Mean,Pythia-70M (Sum) Std,Pythia-70M (Sum) Min,Pythia-70M (Sum) Max,Next Word Dwell Time Mean,Next Word Dwell Time Std,Next Word Dwell Time Min,Next Word Dwell Time Max,Pearson Correlation,R-squared,P-value,Regression Slope,Regression Intercept
+1094805,7.013522145688521,5.631026624325706,0.0,74.18150520324707,201.8629673777522,254.94589248465763,0.0,16729.0,0.011313835539834637,0.0001280028746224253,2.472316205886186e-32,0.512236238888952,198.27038717248033

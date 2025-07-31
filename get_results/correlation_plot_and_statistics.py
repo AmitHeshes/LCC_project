@@ -252,14 +252,14 @@ if __name__ == "__main__":
     
     # Run analysis
     runs = [
-            ("kenlm", "pythia_sum", True),
-            ("kenlm", "pythia_average", True),
+            ("kenlm", "pythia_sum", True, None, None),
+            ("kenlm", "pythia_average", True, None, None),
             ("kenlm", "dwell_time", False, None, None),
             ("pythia_sum", "dwell_time", False, None, None),
             ("pythia_average", "dwell_time", False, None, None),
-            ("kenlm", "next_word_IA_DWELL_TIME", False),
-            ("pythia_sum", "next_word_IA_DWELL_TIME", False),
-            ("pythia_average", "next_word_IA_DWELL_TIME", False)
+            ("kenlm", "next_word_IA_DWELL_TIME", False, None, None),
+            ("pythia_sum", "next_word_IA_DWELL_TIME", False, None, None),
+            ("pythia_average", "next_word_IA_DWELL_TIME", False, None, None),
             ]
     for x_desc, y_desc, does_to_plot_perfect_corellation, xlim, ylim in runs:
         scatter_output = f"{results_folder}\\correlation_scatter_{x_desc}_vs_{y_desc}.png"

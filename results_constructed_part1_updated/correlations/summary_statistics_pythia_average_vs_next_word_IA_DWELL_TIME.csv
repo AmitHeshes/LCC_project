@@ -1,2 +1,2 @@
-Total Words,Pythia-70M (Average) Mean,Pythia-70M (Average) Std,Pythia-70M (Average) Min,Pythia-70M (Average) Max,Next Word Dwell Time Mean,Next Word Dwell Time Std,Next Word Dwell Time Min,Next Word Dwell Time Max,Pearson Correlation,R-squared,P-value
-1094805,5.680084870072545,3.8622639791802844,0.0,24.246856689453125,201.8629673777522,254.94589248465763,0.0,16729.0,0.0008183941963762238,6.697690606622852e-07,0.3918268895190109
+Total Words,Pythia-70M (Average) Mean,Pythia-70M (Average) Std,Pythia-70M (Average) Min,Pythia-70M (Average) Max,Next Word Dwell Time Mean,Next Word Dwell Time Std,Next Word Dwell Time Min,Next Word Dwell Time Max,Pearson Correlation,R-squared,P-value,Regression Slope,Regression Intercept
+1094805,5.680084870072545,3.8622639791802844,0.0,24.246856689453125,201.8629673777522,254.94589248465763,0.0,16729.0,0.0008183941963762238,6.697690606622852e-07,0.3918268895190109,0.05402174473939154,201.55611928280305
