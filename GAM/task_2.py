@@ -2,6 +2,8 @@ import pandas as pd
 import numpy as np
 from pygam import LinearGAM, s
 import matplotlib.pyplot as plt
+import textwrap
+
 
 # Load data
 # INPUT_DATA_PATH = "pre_processing_data/merged_surprisal_dwell_kenlm_pythia.csv"
@@ -64,13 +66,19 @@ for label, y_col in reading_measures.items():
     # Plot
     XX = gam.generate_X_grid(term=0)
     plt.figure(figsize=(7, 4))
-    plt.plot(XX[:, 0], gam.predict(XX))
-    plt.title(f"Effect of Pythia Surprisal on {label}")
-    plt.xlabel("Pythia-70M Surprisal")
-    plt.ylabel(label)
+    plt.plot(XX[:, 0], gam.predict(XX), color='red', linewidth=5)
+    title_text = f"Effect of Pythia Surprisal on {label}"
+    wrapped_title = textwrap.fill(title_text, width=40)
+    plt.title(wrapped_title, fontsize=25, fontweight='bold')
+    # plt.title(f"Effect of Pythia Surprisal on {label}", fontsize=25, fontweight='bold')
+    plt.xlabel("Pythia-70M Surprisal", fontsize=25)
+    plt.ylabel(label, fontsize=25)
     plt.xlim(0, 40)
     plt.grid(True)
     plt.tight_layout()
+
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=20)
     # plt.show(block=False)  # Show the plot without blocking the script
     # plt.pause(1)  # Pause to allow the plot to render
 
