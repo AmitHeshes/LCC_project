@@ -10,6 +10,19 @@ frequency_column = 'wordfreq_frequency'
 OUTPUT_IMAGE_PATH = "task2/plots/gam_"
 
 
+COLUMNS_TO_USE = [
+                        "pythia_sum_surprisal",
+                        "word_length",
+                        "log_freq",
+                        "next_word_IA_DWELL_TIME",
+                        "next_word_IA_FIRST_RUN_DWELL_TIME",
+                        "next_word_IA_REGRESSION_PATH_DURATION",
+                        "IA_DWELL_TIME",
+                        "IA_FIRST_RUN_DWELL_TIME",
+                        "IA_REGRESSION_PATH_DURATION"
+]
+
+
 df = pd.read_csv(INPUT_DATA_PATH)
 
 # Control variables
@@ -58,8 +71,11 @@ for label, y_col in reading_measures.items():
     plt.xlim(0, 40)
     plt.grid(True)
     plt.tight_layout()
-    plt.show(block=False)  # Show the plot without blocking the script
-    plt.pause(1)  # Pause to allow the plot to render
+    # plt.show(block=False)  # Show the plot without blocking the script
+    # plt.pause(1)  # Pause to allow the plot to render
+
+    # add scatter plot in the same figure
+    plt.scatter(subset['pythia_sum_surprisal'], y, alpha=0.5, color='gray', s=10)
 
     # save the plot
     plt.savefig(f"{OUTPUT_IMAGE_PATH}{label.replace(' ', '_').lower()}.png")
@@ -70,7 +86,13 @@ for label, y_col in reading_measures.items():
 
     # print coefficients
     print("\nCoefficients:")
-    for i, coef in enumerate(gam.coef_):
-        print(f"Term {i}: {coef:.4f}")
+    # save coefficients to a file
+    with open(f"{OUTPUT_IMAGE_PATH}{label.replace(' ', '_').lower()}_coefficients.txt", "w") as f:
+        f.write("Coefficients:\n")
+        for i, coef in enumerate(gam.coef_):
+            f.write(f"Term {i}: {coef:.4f}\n")
+
+        # save R^2 value
+        f.write(f"\nR^2: {list(gam.statistics_['pseudo_r2'].values())[0]:.4f}\n")
 
 

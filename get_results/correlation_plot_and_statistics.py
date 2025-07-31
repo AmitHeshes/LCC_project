@@ -5,6 +5,7 @@ import numpy as np
 from scipy import stats
 from scipy.stats import pearsonr
 import warnings
+import textwrap
 warnings.filterwarnings('ignore')
 
 # merged_path = "pre_processing_data\\merged_surprisal_dwell_kenlm_pythia.csv"
@@ -29,10 +30,10 @@ axis_titles = {
     "next_word_IA_DWELL_TIME": "Next Word Dwell Time (ms)"
 }
 graph_titles = {
-    "kenlm": "N-gram Surprisal",
-    "pythia": "Neural Model Surprisal",
-    "pythia_sum": "Neural Model Surprisal",
-    "pythia_average": "Neural Model Surprisal",
+    "kenlm": "KenLM Surprisal",
+    "pythia": "Pythia_70M Surprisal",
+    "pythia_sum": "Pythia_70M_sum Surprisal",
+    "pythia_average": "Pythia_70M_average Surprisal",
     "dwell_time": "Dwell Time",
     "next_word_IA_DWELL_TIME": "Next Word Dwell Time"
 }
@@ -91,7 +92,7 @@ def calculate_statistics(x, y):
     }
 
 
-def create_scatter_plot(df, stats_dict, x_column_desc, y_column_desc, output_file, does_to_plot_perfect_corellation, figsize=(10, 8)):
+def create_scatter_plot(df, stats_dict, x_column_desc, y_column_desc, output_file, does_to_plot_perfect_corellation, figsize=(10, 8), xlim=None, ylim=None):
     """Create a scatter plot comparing n-gram vs neural model surprisals."""
     x_column_name = column_description_to_column_name[x_column_desc]
     y_column_name = column_description_to_column_name[y_column_desc]
@@ -100,12 +101,12 @@ def create_scatter_plot(df, stats_dict, x_column_desc, y_column_desc, output_fil
     
     # Create scatter plot
     plt.scatter(df[x_column_name], df[y_column_name], 
-               alpha=0.6, s=20, color='steelblue', edgecolors='white', linewidth=0.5)
+               alpha=0.6, s=20, color='steelblue', edgecolors='white', linewidth=0)
     
     # Add trend line
     x_line = np.linspace(df[x_column_name].min(), df[x_column_name].max(), 100)
     y_line = stats_dict['slope'] * x_line + stats_dict['intercept']
-    plt.plot(x_line, y_line, 'r--', alpha=0.8, linewidth=2, label='Best fit line')
+    plt.plot(x_line, y_line, 'r-', alpha=0.9, linewidth=5, label='Best fit line')
     
     # Add diagonal reference line (perfect correlation)
     min_val = min(df[x_column_name].min(), df[y_column_name].min())
@@ -115,10 +116,21 @@ def create_scatter_plot(df, stats_dict, x_column_desc, y_column_desc, output_fil
                 linewidth=1, label='Perfect correlation')
     
     # Formatting
-    plt.xlabel(axis_titles[x_column_desc], fontsize=12)
-    plt.ylabel(axis_titles[y_column_desc], fontsize=12)
-    plt.title(f'Relationship between {graph_titles[x_column_desc]} and {graph_titles[y_column_desc]} Estimates', 
-              fontsize=14, fontweight='bold')
+    plt.xlabel(axis_titles[x_column_desc], fontsize=25)
+    if not xlim is None:
+        plt.xlim(xlim[0], xlim[1])
+    if not ylim is None:
+        plt.ylim(ylim[0], ylim[1])
+    plt.ylabel(axis_titles[y_column_desc], fontsize=25)
+    # plt.title(f'Relationship between {graph_titles[x_column_desc]}\nand {graph_titles[y_column_desc]} Estimates', 
+    #           fontsize=25, fontweight='bold')
+    title_text = f'Relationship between {graph_titles[x_column_desc]} and {graph_titles[y_column_desc]} Estimates'
+    wrapped_title = textwrap.fill(title_text, width=40)
+    plt.title(wrapped_title, fontsize=25, fontweight='bold')
+
+    # Increase tick label font size
+    plt.xticks(fontsize=20)
+    plt.yticks(fontsize=20)
     
     # Add statistics text box
     # stats_text = f"""Statistics:
@@ -143,7 +155,7 @@ def create_scatter_plot(df, stats_dict, x_column_desc, y_column_desc, output_fil
         plt.savefig(output_file, dpi=300, bbox_inches='tight')
         print(f"Plot saved as {output_file}")
     
-    plt.show()
+    # plt.show()
 
 def print_summary_statistics(df, stats_dict, output_summary_path, x_column_desc, y_column_desc):
     x_column_name = column_description_to_column_name[x_column_desc]
@@ -182,6 +194,9 @@ def print_summary_statistics(df, stats_dict, output_summary_path, x_column_desc,
     else:
         print("  Significance: Not significant (p >= 0.05)")
 
+    print(f"  Regression slope: {stats_dict['slope']:.4f}")
+    print(f"  Regression intercept: {stats_dict['intercept']:.4f}")
+
     # save all printed information to csv
     short_name_x = short_name[x_column_desc]
     short_name_y = short_name[y_column_desc]
@@ -197,12 +212,14 @@ def print_summary_statistics(df, stats_dict, output_summary_path, x_column_desc,
         f'{short_name_y} Max': df[y_column_name].max(),
         f'Pearson Correlation': stats_dict['correlation'],
         f'R-squared': stats_dict['r_squared'],
-        f'P-value': stats_dict['p_value']
+        f'P-value': stats_dict['p_value'],
+        f'Regression Slope': stats_dict['slope'],
+        f'Regression Intercept': stats_dict['intercept']
     }
     summary_df = pd.DataFrame([summary_stats])
     summary_df.to_csv(output_summary_path, index=False)
 
-def main(csv_file, scatter_output, output_summary_path, x_column_desc, y_column_desc, does_to_plot_perfect_corellation):
+def main(csv_file, scatter_output, output_summary_path, x_column_desc, y_column_desc, does_to_plot_perfect_corellation, xlim=None, ylim=None):
     """Main function to analyze and plot surprisal correlations."""
     x_column_name = column_description_to_column_name[x_column_desc]
     y_column_name = column_description_to_column_name[y_column_desc]
@@ -222,7 +239,7 @@ def main(csv_file, scatter_output, output_summary_path, x_column_desc, y_column_
     print_summary_statistics(df_clean, stats_dict, output_summary_path, x_column_desc=x_column_desc, y_column_desc=y_column_desc)
     
     # Create plot
-    create_scatter_plot(df_clean, stats_dict, x_column_desc=x_column_desc, y_column_desc=y_column_desc, output_file=scatter_output, does_to_plot_perfect_corellation=does_to_plot_perfect_corellation)
+    create_scatter_plot(df_clean, stats_dict, x_column_desc=x_column_desc, y_column_desc=y_column_desc, output_file=scatter_output, does_to_plot_perfect_corellation=does_to_plot_perfect_corellation, xlim=xlim, ylim=ylim)
     
 
 if __name__ == "__main__":
@@ -234,18 +251,20 @@ if __name__ == "__main__":
     # scatter_output = "surprisal_correlation_scatter.png"
     
     # Run analysis
-    runs = [("kenlm", "pythia_sum", True),
+    runs = [
+            ("kenlm", "pythia_sum", True),
             ("kenlm", "pythia_average", True),
-            ("kenlm", "dwell_time", False),
-            ("pythia_sum", "dwell_time", False),
-            ("pythia_average", "dwell_time", False),
+            ("kenlm", "dwell_time", False, None, None),
+            ("pythia_sum", "dwell_time", False, None, None),
+            ("pythia_average", "dwell_time", False, None, None),
             ("kenlm", "next_word_IA_DWELL_TIME", False),
             ("pythia_sum", "next_word_IA_DWELL_TIME", False),
-            ("pythia_average", "next_word_IA_DWELL_TIME", False)]
-    for x_desc, y_desc, does_to_plot_perfect_corellation in runs:
+            ("pythia_average", "next_word_IA_DWELL_TIME", False)
+            ]
+    for x_desc, y_desc, does_to_plot_perfect_corellation, xlim, ylim in runs:
         scatter_output = f"{results_folder}\\correlation_scatter_{x_desc}_vs_{y_desc}.png"
         summary_output = f"{results_folder}\\summary_statistics_{x_desc}_vs_{y_desc}.csv"
-        main(merged_path, scatter_output, summary_output, x_column_desc=x_desc, y_column_desc=y_desc, does_to_plot_perfect_corellation=does_to_plot_perfect_corellation)
+        main(merged_path, scatter_output, summary_output, x_column_desc=x_desc, y_column_desc=y_desc, does_to_plot_perfect_corellation=does_to_plot_perfect_corellation, xlim=xlim, ylim=ylim)
 
     # main(merged_path, f"{results_folder}\\correlation_scatter_kenlm_vs_pythia_sum.png", f"{results_folder}\\summary_statistics_kenlm_vs_pythia_sum.csv", x_column_desc="kenlm", y_column_desc="pythia_sum", does_to_plot_perfect_corellation=True)
     # main(merged_path, f"{results_folder}\\correlation_scatter_kenlm_vs_pythia_average.png", f"{results_folder}\\summary_statistics_kenlm_vs_pythia_average.csv", x_column_desc="kenlm", y_column_desc="pythia_average", does_to_plot_perfect_corellation=True)
