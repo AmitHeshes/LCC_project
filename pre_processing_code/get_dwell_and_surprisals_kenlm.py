@@ -27,7 +27,7 @@ kenlm_trigram_model = kenlm.Model(trained_model_path)
 pythia_model_name = "EleutherAI/pythia-70m"
 # training data for Pythia 70M
 # pythia_train_data_file_path = "training_models_saved_files\\wikitext103_train.txt"
-COLUMNS_TO_ADD = ["subtlex_frequency", "word_length", "IA_FIRST_RUN_DWELL_TIME", "IA_REGRESSION_PATH_DURATION"]
+COLUMNS_TO_ADD = ["wordfreq_frequency", "subtlex_frequency", "word_length", "IA_FIRST_RUN_DWELL_TIME", "IA_REGRESSION_PATH_DURATION"]
 
 ##############################################################################################
 def create_dwell_time_file(output_dwell_time_path, input_eye_scan_path):
