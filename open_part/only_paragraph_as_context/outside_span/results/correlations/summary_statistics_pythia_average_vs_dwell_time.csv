@@ -1,0 +1,2 @@
+Total Words,Pythia-70M (Average) Mean,Pythia-70M (Average) Std,Pythia-70M (Average) Min,Pythia-70M (Average) Max,Dwell Time Mean,Dwell Time Std,Dwell Time Min,Dwell Time Max,Pearson Correlation,R-squared,P-value,Regression Slope,Regression Intercept
+756919,5.69890006007686,3.875165955726398,0.0,24.246856689453125,152.29886553250745,211.3023514946389,0,30260,0.19024804329111275,0.03619431797609711,0.0,10.373712861324108,93.18011268388739

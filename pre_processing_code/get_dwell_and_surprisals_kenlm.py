@@ -7,17 +7,20 @@ from datasets import load_dataset
 import re
 from creating_pythia_surprisals_second_try import create_surprisals_file_using_pythia
 
+
 # Input file
-input_eye_scan_path = f"data\\ia_Paragraph_ordinary.csv"
+input_eye_scan_path = f"data\\outside_critical_span_words.csv"
+pre_processing_folder = f"open_part_data_and_results\\question_and_paragraph_as_context\\outside_span\\pre_processed_data"
+IS_QUESTION_IN_PROMPT = True  # Set to True if you want to include the question in the prompt for Pythia
 # Output file
-dwell_time_path = f"pre_processing_data\\ia_dwell_time.csv"
-kenlm_surprisal_path = f"pre_processing_data\\kenlm_surprisals.csv"
+dwell_time_path = f"{pre_processing_folder}\\ia_dwell_time.csv"
+kenlm_surprisal_path = f"{pre_processing_folder}\\kenlm_surprisals.csv"
 # pythia_surprisal_path = f"pre_processing_data\\pythia70M_surprisals_try_modular_version.csv"
-pythia_surprisal_path = f"pre_processing_data\\pythia70M_surprisals.csv"
-merged_kenlm_dwell_time_path = f"pre_processing_data\\merged_surprisal_dwell_kenlm.csv"
+pythia_surprisal_path = f"{pre_processing_folder}\\pythia70M_surprisals.csv"
+merged_kenlm_dwell_time_path = f"{pre_processing_folder}\\merged_surprisal_dwell_kenlm.csv"
 # pythia_surprisal_path = f"pre_processing_data\\pythia70M_surprisals.csv"
 # merged_path = f"pre_processing_data\\merged_surprisal_dwell_kenlm_pythia.csv"
-merged_path = f"pre_processing_data\\merged_surprisal_dwell_kenlm_pythia.csv"
+merged_path = f"{pre_processing_folder}\\merged_surprisal_dwell_kenlm_pythia.csv"
 # Load KenLM model once
 trained_model_path = "training_models_saved_files\\wikitext103_trigram.binary"
 kenlm_trigram_model = kenlm.Model(trained_model_path)
@@ -175,7 +178,7 @@ def create_merge_file_from_scratch(input_eye_scan_path, dwell_time_path, kenlm_s
         create_surprisal_kenlm_file(kenlm_surprisal_path, input_eye_scan_path, kenlm_trigram_model)
     merge_surprisal_dwell_kenlm(kenlm_surprisal_path, dwell_time_path, merged_kenlm_dwell_time_path)
     if not pythia_surprisal_file_exists:
-        create_surprisals_file_using_pythia(input_data_path=input_eye_scan_path, pythia_surprisals_path=pythia_surprisal_path, model_name=pythia_model_name)
+        create_surprisals_file_using_pythia(input_data_path=input_eye_scan_path, pythia_surprisals_path=pythia_surprisal_path, model_name=pythia_model_name, is_question_in_prompt=IS_QUESTION_IN_PROMPT)
     #     create_pythia70M_surprisals_file(input_eye_scan_path, pythia_surprisal_path)
     merge_surprisal_dwell_kenlm_and_pythia(merged_kenlm_dwell_time_path, pythia_surprisal_path, merged_path)
     add_columns_to_merged_file(input_eye_scan_path, merged_path, columns_to_add)
@@ -185,5 +188,5 @@ def create_merge_file_from_scratch(input_eye_scan_path, dwell_time_path, kenlm_s
 if __name__ == "__main__":
     create_merge_file_from_scratch(input_eye_scan_path, dwell_time_path, kenlm_surprisal_path, merged_kenlm_dwell_time_path, 
                                    kenlm_trigram_model, pythia_surprisal_path, merged_path, COLUMNS_TO_ADD,
-                                   dwell_time_file_exists=False, kenlm_surprisal_file_exists=True, pythia_surprisal_file_exists=True)
+                                   dwell_time_file_exists=False, kenlm_surprisal_file_exists=False, pythia_surprisal_file_exists=False)
     # merge_surprisal_dwell_kenlm_and_pythia(merged_kenlm_dwell_time_path, pythia_surprisal_path, merged_path, COLUMNS_TO_ADD)

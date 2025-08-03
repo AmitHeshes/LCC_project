@@ -8,3 +8,5 @@ pre_processing_data/merged_surprisal_dwell_kenlm_pythia.csv
 pre_processing_data/merged_after_spilover.csv
 data/ia_Paragraph_information_seeking.csv.zip
 data/ia_Paragraph_information_seeking.csv
+data/inside_critical_span_words.csv
+data/outside_critical_span_words.csv

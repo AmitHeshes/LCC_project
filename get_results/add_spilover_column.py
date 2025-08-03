@@ -1,8 +1,9 @@
 import pandas as pd
 
+pre_processing_folder = f"open_part_data_and_results\\question_and_paragraph_as_context\\outside_span\\pre_processed_data"
 
-MERGED_PATH_BEFORE_SPILLOVER = "pre_processing_data\\merged_surprisal_dwell_kenlm_pythia.csv"
-MERGED_PATH_AFTER_SPILLOVER = "pre_processing_data\\merged_after_spilover.csv"
+MERGED_PATH_BEFORE_SPILLOVER = f"{pre_processing_folder}\\merged_surprisal_dwell_kenlm_pythia.csv"
+MERGED_PATH_AFTER_SPILLOVER = f"{pre_processing_folder}\\merged_after_spilover.csv"
 PREV_COLUMNS_TO_SHIFT = ["IA_DWELL_TIME", "IA_FIRST_RUN_DWELL_TIME", "IA_REGRESSION_PATH_DURATION"]
 NEW_COLUMNS_NAME = [f"next_word_{prev_column_to_shift}" for prev_column_to_shift in PREV_COLUMNS_TO_SHIFT]
 

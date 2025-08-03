@@ -10,9 +10,13 @@ warnings.filterwarnings('ignore')
 
 # merged_path = "pre_processing_data\\merged_surprisal_dwell_kenlm_pythia.csv"
 # merged_path = f"pre_processing_data\\merged_surprisal_dwell_kenlm_pythia.csv"
-merged_path = "pre_processing_data\\merged_after_spilover.csv"
+data_and_results_parent_folder = f"open_part_data_and_results\\question_and_paragraph_as_context\\outside_span"
+pre_processing_folder = f"{data_and_results_parent_folder}\\pre_processed_data"
+results_folder = f"{data_and_results_parent_folder}\\results"
+
+merged_path = f"{pre_processing_folder}\\merged_after_spilover.csv"
 # outputs paths
-results_folder = "results_constructed_part1_updated\\correlations"
+results_folder = f"{results_folder}\\correlations"
 column_description_to_column_name = {
     "kenlm": "kenlm_surprisal",
     "pythia": "pythia70M_surprisal",
