@@ -7,9 +7,9 @@ import textwrap
 
 # Load data
 # INPUT_DATA_PATH = "pre_processing_data/merged_surprisal_dwell_kenlm_pythia.csv"
-INPUT_DATA_PATH  = "open_part\\question_and_paragraph_as_context\\inside_span\\pre_processed_data\\merged_after_spilover.csv"
+INPUT_DATA_PATH  = "pre_processing_data\\merged_after_spilover.csv"
 frequency_column = 'wordfreq_frequency'
-OUTPUT_IMAGE_PATH = "open_part\\question_and_paragraph_as_context\\inside_span\\results\\gam\\gam_"
+OUTPUT_IMAGE_PATH = "task2\\plots_new\\gam_"
 
 
 COLUMNS_TO_USE = [
