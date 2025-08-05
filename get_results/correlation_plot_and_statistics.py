@@ -10,13 +10,13 @@ warnings.filterwarnings('ignore')
 
 # merged_path = "pre_processing_data\\merged_surprisal_dwell_kenlm_pythia.csv"
 # merged_path = f"pre_processing_data\\merged_surprisal_dwell_kenlm_pythia.csv"
-data_and_results_parent_folder = f"open_part_data_and_results\\question_and_paragraph_as_context\\outside_span"
+data_and_results_parent_folder = f"open_part\\only_paragraph_as_context\\outside_span"
 pre_processing_folder = f"{data_and_results_parent_folder}\\pre_processed_data"
-results_folder = f"{data_and_results_parent_folder}\\results"
+results_parent_folder = f"{data_and_results_parent_folder}\\results"
 
-merged_path = f"{pre_processing_folder}\\merged_after_spilover.csv"
+merged_path = f"{pre_processing_folder}\\merged_spilover_dwell_3_surprisals.csv"
 # outputs paths
-results_folder = f"{results_folder}\\correlations"
+results_folder = f"{results_parent_folder}\\correlations"
 column_description_to_column_name = {
     "kenlm": "kenlm_surprisal",
     "pythia": "pythia70M_surprisal",
@@ -24,6 +24,8 @@ column_description_to_column_name = {
     "pythia_average": "pythia_average_surprisal",
     "dwell_time": "IA_DWELL_TIME",
     "next_word_IA_DWELL_TIME": "next_word_IA_DWELL_TIME",
+    "llama_sum": "Llama_sum_surprisal",
+    "llama_average": "Llama_average_surprisal"
 }
 axis_titles = {
     "kenlm": "N-gram Model Surprisal (KenLM)",
@@ -31,7 +33,9 @@ axis_titles = {
     "pythia_sum": "Neural Model Surprisal (Pythia-70M)",
     "pythia_average": "Neural Model Surprisal (Pythia-70M)",
     "dwell_time": "Dwell Time (ms)",
-    "next_word_IA_DWELL_TIME": "Next Word Dwell Time (ms)"
+    "next_word_IA_DWELL_TIME": "Next Word Dwell Time (ms)",
+    "llama_sum": "Neural Model Surprisal (Llama-7B)",
+    "llama_average": "Neural Model Surprisal (Llama-7B)"
 }
 graph_titles = {
     "kenlm": "KenLM Surprisal",
@@ -39,7 +43,9 @@ graph_titles = {
     "pythia_sum": "Pythia_70M_sum Surprisal",
     "pythia_average": "Pythia_70M_average Surprisal",
     "dwell_time": "Dwell Time",
-    "next_word_IA_DWELL_TIME": "Next Word Dwell Time"
+    "next_word_IA_DWELL_TIME": "Next Word Dwell Time",
+    "llama_sum": "Llama_7B_Sum Surprisal",
+    "llama_average": "Llama_7B_Average Surprisal"
 }
 short_name = {
     "kenlm": "KenLM",
@@ -47,7 +53,9 @@ short_name = {
     "pythia_sum": "Pythia-70M (Sum)",
     "pythia_average": "Pythia-70M (Average)",
     "dwell_time": "Dwell Time",
-    "next_word_IA_DWELL_TIME": "Next Word Dwell Time"
+    "next_word_IA_DWELL_TIME": "Next Word Dwell Time",
+    "llama_sum": "Llama-7B (Sum)",
+    "llama_average": "Llama-7B (Average)"
 }
 
 def load_surprisal_data(csv_file):
@@ -255,15 +263,23 @@ if __name__ == "__main__":
     # scatter_output = "surprisal_correlation_scatter.png"
     
     # Run analysis
+    # runs = [
+    #         ("kenlm", "pythia_sum", True, None, None),
+    #         ("kenlm", "pythia_average", True, None, None),
+    #         ("kenlm", "dwell_time", False, None, None),
+    #         ("pythia_sum", "dwell_time", False, None, None),
+    #         ("pythia_average", "dwell_time", False, None, None),
+    #         ("kenlm", "next_word_IA_DWELL_TIME", False, None, None),
+    #         ("pythia_sum", "next_word_IA_DWELL_TIME", False, None, None),
+    #         ("pythia_average", "next_word_IA_DWELL_TIME", False, None, None),
+    #         ]
     runs = [
-            ("kenlm", "pythia_sum", True, None, None),
-            ("kenlm", "pythia_average", True, None, None),
-            ("kenlm", "dwell_time", False, None, None),
-            ("pythia_sum", "dwell_time", False, None, None),
-            ("pythia_average", "dwell_time", False, None, None),
-            ("kenlm", "next_word_IA_DWELL_TIME", False, None, None),
-            ("pythia_sum", "next_word_IA_DWELL_TIME", False, None, None),
-            ("pythia_average", "next_word_IA_DWELL_TIME", False, None, None),
+            ("llama_sum", "dwell_time", False, None, None),
+            ("llama_average", "dwell_time", False, None, None),
+            ("llama_sum", "next_word_IA_DWELL_TIME", False, None, None),
+            ("llama_average", "next_word_IA_DWELL_TIME", False, None, None),
+            ("llama_sum", "pythia_sum", False, None, None),
+            ("llama_average", "pythia_average", False, None, None),
             ]
     for x_desc, y_desc, does_to_plot_perfect_corellation, xlim, ylim in runs:
         scatter_output = f"{results_folder}\\correlation_scatter_{x_desc}_vs_{y_desc}.png"

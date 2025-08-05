@@ -1,0 +1,2 @@
+Total Words,Llama-7B (Average) Mean,Llama-7B (Average) Std,Llama-7B (Average) Min,Llama-7B (Average) Max,Dwell Time Mean,Dwell Time Std,Dwell Time Min,Dwell Time Max,Pearson Correlation,R-squared,P-value,Regression Slope,Regression Intercept
+319430,3.3880005487156315,3.102024858278926,0.000448530743597,25.56488037109375,194.26166296215132,248.67646379813942,0,6263,0.1163648082033315,0.013540768588198127,0.0,9.32848392149799,162.6567543174312

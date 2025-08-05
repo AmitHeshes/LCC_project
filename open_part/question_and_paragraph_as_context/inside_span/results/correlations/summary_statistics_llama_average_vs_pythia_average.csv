@@ -1,0 +1,2 @@
+Total Words,Llama-7B (Average) Mean,Llama-7B (Average) Std,Llama-7B (Average) Min,Llama-7B (Average) Max,Pythia-70M (Average) Mean,Pythia-70M (Average) Std,Pythia-70M (Average) Min,Pythia-70M (Average) Max,Pearson Correlation,R-squared,P-value,Regression Slope,Regression Intercept
+319430,3.06662128539799,2.9346120617933407,0.0001210757861069,24.82023811340332,5.413239132965737,3.7681074414777824,0.0026416534092277,23.4825382232666,0.6500018754946055,0.4225024381465047,0.0,0.8346169280477064,2.853785096261158

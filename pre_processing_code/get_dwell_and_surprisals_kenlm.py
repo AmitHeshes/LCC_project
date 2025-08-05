@@ -189,4 +189,9 @@ if __name__ == "__main__":
     create_merge_file_from_scratch(input_eye_scan_path, dwell_time_path, kenlm_surprisal_path, merged_kenlm_dwell_time_path, 
                                    kenlm_trigram_model, pythia_surprisal_path, merged_path, COLUMNS_TO_ADD,
                                    dwell_time_file_exists=False, kenlm_surprisal_file_exists=False, pythia_surprisal_file_exists=False)
-    # merge_surprisal_dwell_kenlm_and_pythia(merged_kenlm_dwell_time_path, pythia_surprisal_path, merged_path, COLUMNS_TO_ADD)
+    
+    # parent_folder = "open_part\\question_and_paragraph_as_context\\inside_span\\pre_processed_data"
+    # merged_prev = f"{parent_folder}\\merged_after_spilover.csv"
+    # llama_surprisal_path = f"{parent_folder}\\llama7B_surprisals.csv"
+    # output_path = f"{parent_folder}\\merged_spilover_dwell_3_surprisals.csv"
+    # merge_surprisal_dwell_kenlm_and_pythia(merged_prev, llama_surprisal_path, output_path)

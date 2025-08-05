@@ -6,14 +6,28 @@ import textwrap
 
 
 # Load data
-# INPUT_DATA_PATH = "pre_processing_data/merged_surprisal_dwell_kenlm_pythia.csv"
-INPUT_DATA_PATH  = "pre_processing_data\\merged_after_spilover.csv"
+PARENT_FOLDER = "open_part\\only_paragraph_as_context\\inside_span"
+INPUT_DATA_PATH  = f"{PARENT_FOLDER}\\pre_processed_data\\merged_spilover_dwell_3_surprisals.csv"
 frequency_column = 'wordfreq_frequency'
-OUTPUT_IMAGE_PATH = "task2\\plots_new\\gam_"
+OUTPUT_IMAGE_PATH = f"{PARENT_FOLDER}\\results\\gam\\llama_sum\\gam_"
+COLUMN_OF_SURPRISAL = "Llama_sum_surprisal"
+X_AXIS_NAMES = {
+    "pythia_sum_surprisal": "Pythia",
+    "Llama_sum_surprisal": "Llama",
+}
+TITLE_NAMES = {
+    "pythia_sum_surprisal": "Pythia-70M Surprisal",
+    "Llama_sum_surprisal": "Llama-7B Surprisal",
+}
+X_LIM = {
+    "pythia_sum_surprisal": (0, 40),
+    "Llama_sum_surprisal": (0, 33),
+}
 
 
 COLUMNS_TO_USE = [
                         "pythia_sum_surprisal",
+                        "Llama_sum_surprisal",
                         "word_length",
                         "log_freq",
                         "next_word_IA_DWELL_TIME",
@@ -45,7 +59,7 @@ for label, y_col in reading_measures.items():
     print(f"\nProcessing {label} ({y_col})...")
     
     # Drop rows with missing data in relevant columns
-    subset = df[['pythia_sum_surprisal', 'log_freq', 'word_length', y_col]].dropna()
+    subset = df[[COLUMN_OF_SURPRISAL, 'log_freq', 'word_length', y_col]].dropna()
     
     # Also remove infinity values
     # subset = subset[~np.isinf(subset).any(axis=1)]
@@ -53,7 +67,7 @@ for label, y_col in reading_measures.items():
     print(f"Rows after cleaning: {len(subset)} (removed {len(df) - len(subset)} rows)")
     
     # Prepare features and target
-    X = subset[['pythia_sum_surprisal', 'log_freq', 'word_length']].values
+    X = subset[[COLUMN_OF_SURPRISAL, 'log_freq', 'word_length']].values
     # Replace missing values in y_col with "0" (or any other appropriate value)
     subset[y_col] = subset[y_col].replace({".": "0"})
     # Convert y_col to numeric, coercing errors to NaN
@@ -67,13 +81,13 @@ for label, y_col in reading_measures.items():
     XX = gam.generate_X_grid(term=0)
     plt.figure(figsize=(10, 8))
     plt.plot(XX[:, 0], gam.predict(XX), color='red', linewidth=5)
-    title_text = f"Effect of Pythia Surprisal on {label}"
+    title_text = f"Effect of {X_AXIS_NAMES[COLUMN_OF_SURPRISAL]} Surprisal on {label}"
     wrapped_title = textwrap.fill(title_text, width=40)
     plt.title(wrapped_title, fontsize=25, fontweight='bold')
     # plt.title(f"Effect of Pythia Surprisal on {label}", fontsize=25, fontweight='bold')
-    plt.xlabel("Pythia-70M Surprisal", fontsize=25)
+    plt.xlabel(f"{TITLE_NAMES[COLUMN_OF_SURPRISAL]}", fontsize=25)
     plt.ylabel(label, fontsize=25)
-    plt.xlim(0, 40)
+    plt.xlim(X_LIM[COLUMN_OF_SURPRISAL][0], X_LIM[COLUMN_OF_SURPRISAL][1])
     plt.grid(True)
 
     plt.xticks(fontsize=20)
